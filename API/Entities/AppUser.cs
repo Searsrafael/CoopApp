@@ -9,6 +9,9 @@ namespace API.Entities
     {
         public int Id { get; set; } // Our Primary key, automatically updates when a new record is added
         public string UserName { get; set; }
+        public byte[] PasswordHash { get; set; }
+        public byte[] PasswordSalt { get; set; }
+
 
         
     }

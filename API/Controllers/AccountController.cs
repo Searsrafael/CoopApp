@@ -27,23 +27,26 @@ namespace API.Controllers
         {
             if (await UserExists(registerDto.Username)) return BadRequest("Username is taken");
 
-            using var hmac = new HMACSHA512();
-
-            var user = new AppUser
+            using (var hmac = new HMACSHA512())
             {
-                UserName = registerDto.Username.ToLower(),
-                // GetBytes is not able to do NULL
-                PasswordHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(registerDto.Password)),
-                PasswordSalt = hmac.Key
-            };
-            _context.Users.Add(user);
-            await _context.SaveChangesAsync();
+                var user = new AppUser
+                {
+                    UserName = registerDto.Username.ToLower(),
+                    // GetBytes is not able to do NULL
+                    PasswordHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(registerDto.Password)),
+                    PasswordSalt = hmac.Key
+                };
+                _context.Users.Add(user);
+                await _context.SaveChangesAsync();
 
-            return new UserDto
-            {
-                Username = user.UserName,
-                Token = _tokenService.CreateToken(user)
-            };
+                return new UserDto
+                {
+                    Username = user.UserName,
+                    Token = _tokenService.CreateToken(user)
+                };
+
+            }
+
 
         }
         [HttpPost("login")]
